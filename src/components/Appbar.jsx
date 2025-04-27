@@ -6,10 +6,16 @@ import Toolbar from '@mui/material/Toolbar';
 import Typography from '@mui/material/Typography';
 import Button from '@mui/material/Button';
 import '../index.css'
+import { useEffect } from 'react';
 
 const AppBarComponent = ({ position, children }) => {
     const { keycloak, authenticated, login, logout } = useKeycloak();
-    console.log(keycloak.tokenParsed);
+
+    useEffect(() => {
+        if (authenticated && keycloak?.tokenParsed) {
+            registerUser();
+        }
+    }, [authenticated]);
 
     const registerUser = async () => {
         try {
@@ -20,11 +26,12 @@ const AppBarComponent = ({ position, children }) => {
                 birthday: keycloak.tokenParsed?.birthday,
                 gender: keycloak.tokenParsed?.gender
             };
-
-            const response = await fetch('http://localhost:6000/api/innovator/register', {
+            console.log(userData)
+            const response = await fetch('http://localhost:9000/api/innovator/register', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${keycloak.token}`
                 },
                 body: JSON.stringify(userData)
             });
@@ -44,10 +51,7 @@ const AppBarComponent = ({ position, children }) => {
         if (authenticated) {
             logout();
         } else {
-            await login();
-            if (keycloak.tokenParsed) {
-                await registerUser();
-            }
+            await login(); // just login, no registerUser here
         }
     };
 
