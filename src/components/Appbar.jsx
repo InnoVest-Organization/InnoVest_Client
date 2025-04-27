@@ -8,13 +8,46 @@ import Button from '@mui/material/Button';
 import '../index.css'
 
 const AppBarComponent = ({ position, children }) => {
-    const { keycloak,authenticated, login, logout } = useKeycloak();
+    const { keycloak, authenticated, login, logout } = useKeycloak();
     console.log(keycloak.tokenParsed);
-    const handleAuthClick = () => {
+
+    const registerUser = async () => {
+        try {
+            const userData = {
+                firstName: keycloak.tokenParsed?.given_name,
+                lastName: keycloak.tokenParsed?.family_name,
+                email: keycloak.tokenParsed?.email,
+                birthday: keycloak.tokenParsed?.birthday,
+                gender: keycloak.tokenParsed?.gender
+            };
+
+            const response = await fetch('http://localhost:6000/api/innovator/register', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(userData)
+            });
+
+            if (!response.ok) {
+                throw new Error('Registration failed');
+            }
+
+            const data = await response.json();
+            console.log('Registration successful:', data);
+        } catch (error) {
+            console.error('Error registering user:', error);
+        }
+    };
+
+    const handleAuthClick = async () => {
         if (authenticated) {
             logout();
         } else {
-            login();
+            await login();
+            if (keycloak.tokenParsed) {
+                await registerUser();
+            }
         }
     };
 
