@@ -14,8 +14,8 @@ function App() {
         <Toaster position="top-right" />
         <Routes>
           <Route path="/payment" element={<Payment />} />
-          {/*<Route path="/payment-success" element={<PaymentSuccess />} />*/}
-          {/*<Route path="/payment-failure" element={<PaymentFailure />} />*/}
+          <Route path="/payment-success" element={<PaymentSuccess />} />
+          <Route path="/payment-failure" element={<PaymentFailure />} />
         </Routes>
       </div>
     </Router>
