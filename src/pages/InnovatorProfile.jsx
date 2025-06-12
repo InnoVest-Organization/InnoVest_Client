@@ -1,12 +1,14 @@
 import React, { useState, useEffect } from 'react';
 import { getInnovatorProfile, updateInnovatorProfile, getInnovatorInventions, updateBidTimes } from '../services/innovatorService';
 import AppBar from '../components/Appbar.jsx';
+import { useNavigate } from 'react-router-dom';
 
 // Default profile picture
 const DEFAULT_PROFILE_PICTURE = 'https://www.gravatar.com/avatar/00000000000000000000000000000000?d=mp&f=y';
 
 const InnovatorProfile = () => {
     const innovatorId = 1;
+    const navigate = useNavigate();
     const [profile, setProfile] = useState(null);
     const [inventions, setInventions] = useState([]);
     const [isEditing, setIsEditing] = useState(false);
@@ -466,6 +468,16 @@ const InnovatorProfile = () => {
                                 </div>
                             </div>
 
+                            {/* Register New Innovation Button */}
+                            <div className="flex justify-end mb-4">
+                                <button
+                                    onClick={() => navigate('/innovation-registration')}
+                                    className="px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+                                >
+                                    Register New Innovation
+                                </button>
+                            </div>
+
                             {/* Inventions Section */}
                             <div className="bg-white rounded-xl shadow-sm overflow-hidden">
                                 <div className="border-b border-gray-100">
@@ -549,10 +561,13 @@ const InnovatorProfile = () => {
                                                     <h4 className="text-sm font-medium text-gray-700 mb-2">Sales Performance</h4>
                                                     <div className="bg-white rounded-lg p-3">
                                                         <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
-                                                            {invention.salesData.map((sale, index) => (
+                                                            {/* Ensure salesData elements are valid before calling toLocaleString */}
+                                                            {(invention.salesData || []).map((sale, index) => (
                                                                 <div key={index} className="text-center">
                                                                     <div className="text-xs text-gray-500">Month {index + 1}</div>
-                                                                    <div className="font-medium text-gray-900 text-sm sm:text-base">${sale.toLocaleString()}</div>
+                                                                    <div className="font-medium text-gray-900 text-sm sm:text-base">
+                                                                        ${sale ? sale.toLocaleString() : 'N/A'}
+                                                                    </div>
                                                                 </div>
                                                             ))}
                                                         </div>
