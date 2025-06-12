@@ -72,7 +72,11 @@ const InnovatorProfile = () => {
         e.preventDefault();
         try {
             setIsUpdating(true);
-            await updateInnovatorProfile(innovatorId, formData);
+            const updatedData = {
+                ...formData,
+                profilePicture: formData.profilePicture || profile.profilePicture // Include profile picture
+            };
+            await updateInnovatorProfile(innovatorId, updatedData);
             await fetchProfile();
             setIsEditing(false);
             setError('');
@@ -183,6 +187,38 @@ const InnovatorProfile = () => {
         setIsEditingBidTimes(true);
     };
 
+    const handleImageUpload = async (e) => {
+        const file = e.target.files[0];
+        if (!file) return;
+
+        // Generate the signed URL dynamically using the innovatorId
+        const signedUrl = `https://storage.googleapis.com/profile_imges/${innovatorId}/signed-url-example`;
+
+        try {
+            const response = await fetch(signedUrl, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': file.type
+                },
+                body: file
+            });
+
+            if (!response.ok) {
+                throw new Error('Failed to upload image');
+            }
+
+            const publicUrl = `${signedUrl.split('?')[0]}?timestamp=${Date.now()}`; // Force refresh by appending timestamp
+            setFormData((prev) => ({ ...prev, profilePicture: publicUrl }));
+            setUpdateSuccess('Profile picture uploaded successfully!');
+            setTimeout(() => {
+                setUpdateSuccess('');
+            }, 3000);
+            console.log('Image uploaded successfully:', publicUrl);
+        } catch (error) {
+            console.error('Upload failed:', error);
+        }
+    };
+
     const activeInventions = inventions.filter(inv => !inv.investorId);
     const fundedInventions = inventions.filter(inv => inv.investorId);
 
@@ -241,6 +277,7 @@ const InnovatorProfile = () => {
                                                 src={profile.profilePicture || DEFAULT_PROFILE_PICTURE}
                                                 alt="Profile"
                                                 className="w-32 h-32 rounded-full object-cover border-4 border-gray-100 shadow-sm transition-transform group-hover:scale-105"
+                                                style={{ objectFit: 'cover', width: '128px', height: '128px' }}
                                                 onError={(e) => {
                                                     e.target.onerror = null;
                                                     e.target.src = DEFAULT_PROFILE_PICTURE;
@@ -368,6 +405,19 @@ const InnovatorProfile = () => {
                                                     />
                                                 </div>
                                             </div>
+                                            {isEditing && (
+                                                <div className="mt-4">
+                                                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                                                        Profile Picture
+                                                    </label>
+                                                    <input
+                                                        type="file"
+                                                        accept="image/*"
+                                                        onChange={handleImageUpload}
+                                                        className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-gray-400 focus:border-transparent"
+                                                    />
+                                                </div>
+                                            )}
                                             <div className="flex justify-end">
                                                 <button
                                                     type="submit"
@@ -702,4 +752,4 @@ const InnovatorProfile = () => {
     );
 };
 
-export default InnovatorProfile; 
+export default InnovatorProfile;
