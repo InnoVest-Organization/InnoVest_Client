@@ -19,3 +19,11 @@ export const createInnovation = async (innovationData) => {
         throw new Error('Failed to create innovation');
     }
 };
+
+export const getInnovationDetail = async (inventionId) => {
+    const response = await fetch(`http://localhost:5002/api/inventions/${inventionId}`);
+    if (!response.ok) {
+        throw new Error('Failed to fetch innovation details');
+    }
+    return response.json();
+};
