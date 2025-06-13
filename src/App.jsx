@@ -1,12 +1,21 @@
 import React from 'react';
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { KeycloakProvider } from './context/KeycloakContext';
+import { Toaster } from 'sonner';
 import Home from './pages/Home';
+import About from './pages/About';
 
 function App() {
   return (
-    <KeycloakProvider>
-      <Home />
-    </KeycloakProvider>
+    <Router>
+      <div className="App">
+        <Toaster position="top-right" />
+        <Routes>
+          <Route path="/" element={<Home />} />
+          <Route path="/about" element={<About />} />
+        </Routes>
+      </div>
+    </Router>
   );
 }
 
