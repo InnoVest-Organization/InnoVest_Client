@@ -1,10 +1,12 @@
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { KeycloakProvider } from './context/KeycloakContext';
+import { Toaster } from 'sonner';
 import Home from './pages/Home';
 import InnovatorProfile from './pages/InnovatorProfile';
 import InnovationRegistration from './pages/InnovationRegistration';
 import InnovationDetail from './pages/InnovationDetail';
+import About from './pages/About';
 
 function App() {
   return (
@@ -15,6 +17,7 @@ function App() {
           <Route path="/innovator-profile" element={<InnovatorProfile />} />
           <Route path="/innovation-registration" element={<InnovationRegistration />} />
           <Route path="/innovation-detail" element={<InnovationDetail />} />
+          <Route path="/about" element={<About />} />
         </Routes>
       </Router>
     </KeycloakProvider>
