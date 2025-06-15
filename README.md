@@ -14,3 +14,15 @@
 # Innovest_About Page
 
 ![screencapture-localhost-5174-about-2025-06-13-13_05_02.png](src/assets/Screenshots/screencapture-localhost-5174-about-2025-06-13-13_05_02.png)
+
+# Innovest_Investor Pages
+
+## Investor Login Page
+### http://localhost:5173/investor-login
+
+![screencapture-localhost-5174-investor-login-2025-06-13-13_05_02.png](src/assets/investor/investor_login_page.jpg)
+
+## Investor Profile Page
+### http://localhost:5173/investor-profile
+
+![screencapture-localhost-5174-investor-profile-2025-06-13-13_05_02.png](src/assets/investor/investor_profile_page.jpg)
