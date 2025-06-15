@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from 'react';
+import { useNavigate, useLocation } from 'react-router-dom';
 import AppBar from '../components/Appbar';
 import { Card, CardContent, CardHeader, CardTitle } from '../components/SuccessStory/ui';
 import { Button } from '../components/SuccessStory/ui';
-import { User, Calendar, Award, Tag, Clock, DollarSign } from 'lucide-react';
+import { User, Calendar, Award, Tag, Clock, DollarSign, Eye } from 'lucide-react';
 import { getInvestorDetails, getInvestorProducts } from '../services/investorService';
 
 // Default profile picture
@@ -12,9 +13,18 @@ const DEFAULT_PROFILE_PICTURE = 'https://www.gravatar.com/avatar/000000000000000
 const SAMPLE_PROFILE_PHOTO = 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80';
 
 const InvestorProfile = () => {
+    const navigate = useNavigate();
+    const location = useLocation();
     const [investorData, setInvestorData] = useState(null);
     const [products, setProducts] = useState([]);
     const [loading, setLoading] = useState(true);
+    const [biddedProducts, setBiddedProducts] = useState(() => {
+        // Initialize from location state if available
+        if (location.state?.hasBidded && location.state?.biddedProductId) {
+            return [location.state.biddedProductId];
+        }
+        return [];
+    });
 
     useEffect(() => {
         const fetchInvestorData = async () => {
@@ -182,8 +192,27 @@ const InvestorProfile = () => {
                                             </div>
                                         </div>
                                         {product.isLive && (
-                                            <Button className="w-full bg-gradient-to-r from-gray-700 to-gray-800 hover:from-gray-800 hover:to-gray-900 text-white py-2 rounded-lg transition-all duration-300 transform hover:scale-[1.02]">
-                                                Start Bid
+                                            <Button 
+                                                onClick={() => navigate('/place-bid', { 
+                                                    state: { 
+                                                        product,
+                                                        investorId: investorData?.id || 6634104, // Pass the investor ID from state
+                                                        hasBidded: biddedProducts.includes(product.inventionId) // Pass if user has already bid
+                                                    } 
+                                                })}
+                                                className={`w-full py-2 rounded-lg transition-all duration-300 transform hover:scale-[1.02] flex items-center justify-center ${
+                                                    biddedProducts.includes(product.inventionId)
+                                                        ? 'bg-blue-600 hover:bg-blue-700 text-white'
+                                                        : 'bg-gradient-to-r from-gray-700 to-gray-800 hover:from-gray-800 hover:to-gray-900 text-white'
+                                                }`}
+                                            >
+                                                {biddedProducts.includes(product.inventionId) ? (
+                                                    <>
+                                                        <Eye className="w-4 h-4 mr-2" /> Show My Bid
+                                                    </>
+                                                ) : (
+                                                    'Start Bid'
+                                                )}
                                             </Button>
                                         )}
                                     </div>
