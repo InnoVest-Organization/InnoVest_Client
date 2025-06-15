@@ -11,6 +11,7 @@ import Payment from "./pages/Payment.jsx";
 import PaymentSuccess from './pages/PaymentSuccess';
 import PaymentFailure from './pages/PaymentFailure';
 import InvestorProfile from './pages/InvestorProfile';
+import InvestorLogin from './pages/InvestorLogin';
 
 function App() {
   return (
@@ -20,6 +21,7 @@ function App() {
           <Route path="/" element={<Home />} />
           <Route path="/innovator-profile" element={<InnovatorProfile />} />
           <Route path="/investor-profile" element={<InvestorProfile />} />
+          <Route path="/investor-login" element={<InvestorLogin />} />
           <Route path="/innovation-registration" element={<InnovationRegistration />} />
           <Route path="/innovation-detail" element={<InnovationDetail />} />
           <Route path="/about" element={<About />} />
