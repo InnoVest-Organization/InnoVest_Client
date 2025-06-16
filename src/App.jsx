@@ -12,6 +12,7 @@ import PaymentSuccess from './pages/PaymentSuccess';
 import PaymentFailure from './pages/PaymentFailure';
 import InvestorProfile from './pages/InvestorProfile';
 import InvestorLogin from './pages/InvestorLogin';
+import PlaceBid from './pages/PlaceBid';
 
 function App() {
   return (
@@ -28,6 +29,7 @@ function App() {
           <Route path="/payment" element={<Payment />} />
           <Route path="/payment-success" element={<PaymentSuccess />} />
           <Route path="/payment-failure" element={<PaymentFailure />} />
+          <Route path="/place-bid" element={<PlaceBid />} />
         </Routes>
       </Router>
     </KeycloakProvider>
