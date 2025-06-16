@@ -1,19 +1,23 @@
 import React, { useEffect } from 'react';
 import { useKeycloak } from '../context/KeycloakContext';
+import { useNavigate } from 'react-router-dom';
 import AppBar from '@mui/material/AppBar';
 import Box from '@mui/material/Box';
 import Toolbar from '@mui/material/Toolbar';
 import Typography from '@mui/material/Typography';
 import Button from '@mui/material/Button';
 import '../index.css';
-import logo from '../assets/Screenshot 2025-04-29 210859.png' ;
+import logo from '../assets/Screenshot 2025-04-29 210859.png';
 
 const AppBarComponent = ({ position, children }) => {
     const { keycloak, authenticated, login, logout } = useKeycloak();
+    const navigate = useNavigate();
 
     useEffect(() => {
         if (authenticated && keycloak?.tokenParsed) {
             registerUser();
+            // Redirect to innovator profile after login
+            navigate('/innovator-profile');
         }
     }, [authenticated]);
 
@@ -57,10 +61,10 @@ const AppBarComponent = ({ position, children }) => {
 
     return (
         <Box sx={{ flexGrow: 1 }}>
-            <AppBar position="static" sx={{ backgroundColor: 'grey.700', borderRadius: '12px', width: '99%', margin: '5px auto', padding: '0 20px' }}>
+            <AppBar position="static" sx={{ backgroundColor: 'grey.800', borderRadius: '12px', width: '99%', margin: '5px auto', padding: '0 20px' }}>
                 <Toolbar sx={{ display: 'flex', justifyContent: 'space-between' }}>
                     <Box sx={{ display: 'flex', alignItems: 'center' }}>
-                    <img src={logo} alt="Logo" style={{ height: 40, borderRadius: '12px' }} />
+                        <img src={logo} alt="Logo" style={{ height: 40, borderRadius: '12px' }} />
 
                     </Box>
                     <Typography variant="h5" component="div" sx={{ position: 'absolute', left: '50%', transform: 'translateX(-50%)', fontWeight: 'bold' }}>
