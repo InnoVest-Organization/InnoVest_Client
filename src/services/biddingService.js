@@ -28,3 +28,17 @@ export const placeBid = async (bidData) => {
         throw error;
     }
 };
+
+export const acceptBid = async (orderId) => {
+    try {
+        // Use PATCH method with the correct endpoint
+        const response = await biddingApi.patch('/bids/select', {
+            orderId: orderId,
+            selected: true
+        });
+        return response.data;
+    } catch (error) {
+        console.error('Error in acceptBid:', error);
+        throw error;
+    }
+};

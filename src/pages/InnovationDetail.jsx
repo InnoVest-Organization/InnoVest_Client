@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { Chart as ChartJS, CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend } from 'chart.js';
 import { Line } from 'react-chartjs-2';
 import AppBar from '../components/Appbar.jsx';
@@ -9,9 +9,13 @@ ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, Title, T
 
 const InnovationDetail = () => {
     const navigate = useNavigate();
-    const inventionId = 4010; // Hardcoded invention ID
+    const location = useLocation();
+    const inventionId = 4001; // Hardcoded invention ID
     const [innovation, setInnovation] = useState(null);
     const [error, setError] = useState('');
+    
+    // Check if there's a selected bid in the location state
+    const selectedBidFromState = location.state?.selectedBid;
 
     // Function to create chart data for sales performance
     const createSalesChartData = (salesData) => {
@@ -108,14 +112,23 @@ const InnovationDetail = () => {
         const fetchInnovationDetail = async () => {
             try {
                 const data = await getInnovationDetail(inventionId);
-                setInnovation(data);
+                
+                // If we have a selected bid from navigation state, add it to the innovation data
+                if (selectedBidFromState) {
+                    setInnovation({
+                        ...data,
+                        selectedBid: selectedBidFromState
+                    });
+                } else {
+                    setInnovation(data);
+                }
             } catch (err) {
                 setError('Failed to fetch innovation details.');
             }
         };
 
         fetchInnovationDetail();
-    }, []);    if (error) {
+    }, [selectedBidFromState, inventionId]);    if (error) {
         return (
             <div className="min-h-screen bg-gray-50">
                 <AppBar position="static">
@@ -327,6 +340,46 @@ const InnovationDetail = () => {
                                         </span>
                                     )}
                                 </div>
+                                
+                                {/* See Available Bids Button - shown when no bid is accepted */}
+                                {innovation.isLive && !innovation.selectedBid && (
+                                    <button
+                                        onClick={() => navigate('/accept-bids', { state: { 
+                                            inventionId: innovation.id || inventionId,
+                                            innovationTitle: innovation.title || `Innovation #${inventionId}`
+                                        }})}
+                                        className="w-full flex items-center justify-center gap-2 px-4 py-3 bg-blue-600 text-white rounded-xl hover:bg-blue-700 transition-all duration-300 shadow-md font-medium"
+                                    >
+                                        <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
+                                        </svg>
+                                        See Available Bids
+                                    </button>
+                                )}
+                                
+                                {/* Selected Bid Details - shown when a bid is accepted */}
+                                {innovation.isLive && innovation.selectedBid && (
+                                    <div className="bg-gray-50 p-4 rounded-xl border border-gray-200">
+                                        <h3 className="text-lg font-semibold text-gray-800 mb-2">Selected Bid</h3>
+                                        <div className="space-y-2">
+                                            <p className="text-sm text-gray-600">
+                                                <span className="font-medium">Investor ID:</span> #{innovation.selectedBid.investorId}
+                                            </p>
+                                            <p className="text-sm text-gray-600">
+                                                <span className="font-medium">Amount:</span> ${innovation.selectedBid.bidAmount.toLocaleString()}
+                                            </p>
+                                            <p className="text-sm text-gray-600">
+                                                <span className="font-medium">Equity:</span> {innovation.selectedBid.equity}%
+                                            </p>
+                                            <div className="pt-2">
+                                                <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800 border border-green-200">
+                                                    Accepted
+                                                </span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                )}
+                                
                                 {innovation.productVideo && (
                                     <a
                                         href={innovation.productVideo}
